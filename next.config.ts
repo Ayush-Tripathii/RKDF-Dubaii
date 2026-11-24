@@ -8,7 +8,8 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || (isGitHubActions ? `/${repo}` : ""),
   images: {
-    unoptimized: true,
+    loader: "custom",
+    loaderFile: "./src/lib/image-loader.ts",
   },
   turbopack: {
     rules: {
