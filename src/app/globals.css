@@ -1,26 +1,232 @@
 @import "tailwindcss";
 
+/* ──────────────────────────────────────────────────────────────
+   RKDF University Dubai — design tokens
+   Defined ONCE here. Components use Tailwind utilities that resolve
+   to these custom properties (bg-canvas, text-ink, border-line …).
+   Never hard-code hex values in components.
+
+   Sampled from /brand/rkdf-logo-original.png (pixel-frequency):
+     crest red  #EC3434   crest blue #2C54A4
+   The crest contains no gold/brass, so the structural accent is the
+   crest red. Ink is the crest blue deepened at the same hue so that
+   headings reach 13:1 on the ivory canvas.
+   ────────────────────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --canvas: #fcfbf8;      /* warm ivory — default page background */
+  --surface: #ffffff;     /* cards, panels */
+  --sand: #efe9de;        /* alternating bands, image mattes */
+  --sand-deep: #e6decf;   /* pressed / hover on sand */
+  --ink: #1a2c5b;         /* crest blue, deepened — headings & nav (13.0:1 on canvas) */
+  --ink-brand: #2c54a4;   /* crest blue as sampled — links, secondary marks (6.9:1) */
+  --ink-soft: #535f82;    /* ink at ~75% on canvas — body copy (6.0:1 canvas, 5.1:1 sand) */
+  --accent: #ec3434;      /* crest red as sampled — rules, large numerals (≥24px only, 4.0:1) */
+  --accent-deep: #b8242b; /* text-safe accent — small accent text, solid CTA (6.3:1 w/ white) */
+  --line: #e2dcd1;        /* 1px hairlines */
+  --focus: #1b6ef3;       /* keyboard focus ring only */
+  --on-accent: #ffffff;
+  --whatsapp: #128c7e;    /* WhatsApp teal — icon/fab only (4.1:1 vs white glyph, non-text) */
+
+  --gutter: 16px;
+  --header-h: 64px;
+  --ease-editorial: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 768px) {
+  :root { --gutter: 40px; }
+}
+@media (min-width: 1024px) {
+  :root { --header-h: 84px; }
+}
+@media (min-width: 1280px) {
+  :root { --gutter: 120px; }
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-sand: var(--sand);
+  --color-sand-deep: var(--sand-deep);
+  --color-ink: var(--ink);
+  --color-ink-brand: var(--ink-brand);
+  --color-ink-soft: var(--ink-soft);
+  --color-accent: var(--accent);
+  --color-accent-deep: var(--accent-deep);
+  --color-line: var(--line);
+  --color-focus: var(--focus);
+  --color-on-accent: var(--on-accent);
+  --color-whatsapp: var(--whatsapp);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --font-display: var(--font-newsreader), "Newsreader", Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-plex), "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-arabic: var(--font-plex-arabic), var(--font-plex), "Segoe UI", Tahoma, sans-serif;
+  --font-arabic-display: var(--font-naskh), var(--font-plex-arabic), serif;
+
+  --ease-editorial: var(--ease-editorial);
+
+  --text-display-1: clamp(2.5rem, 1.45rem + 4.2vw, 5.5rem);
+  --text-display-1--line-height: 1.02;
+  --text-display-1--letter-spacing: -0.02em;
+  --text-display-2: clamp(2rem, 1.35rem + 2.6vw, 3.75rem);
+  --text-display-2--line-height: 1.06;
+  --text-display-2--letter-spacing: -0.02em;
+  --text-display-3: clamp(1.5rem, 1.2rem + 1.1vw, 2.25rem);
+  --text-display-3--line-height: 1.15;
+  --text-display-3--letter-spacing: -0.015em;
+  --text-display-4: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+  --text-display-4--line-height: 1.25;
+  --text-display-4--letter-spacing: -0.01em;
+  --text-stat: clamp(2.75rem, 1.9rem + 2.8vw, 4.5rem);
+  --text-stat--line-height: 1;
+  --text-stat--letter-spacing: -0.02em;
+  --text-lead: clamp(1.125rem, 1.05rem + 0.3vw, 1.3125rem);
+  --text-lead--line-height: 1.6;
+  --text-eyebrow: 0.6875rem;
+  --text-eyebrow--line-height: 1.4;
+  --text-eyebrow--letter-spacing: 0.18em;
+
+  --container-measure: 68ch;
+  --container-shell: 1440px;
+
+  --animate-marquee: marquee 48s linear infinite;
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(-50% * var(--marquee-dir, 1))); }
   }
 }
 
+/* ── Base ─────────────────────────────────────────────────────── */
+html {
+  background: var(--canvas);
+  color: var(--ink);
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 16px);
+}
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--canvas);
+  color: var(--ink-soft);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+[dir="rtl"] body {
+  font-family: var(--font-arabic);
+  line-height: 1.9;
+}
+[dir="rtl"] { --marquee-dir: -1; }
+
+h1, h2, h3, h4 { color: var(--ink); text-wrap: balance; }
+p { text-wrap: pretty; }
+
+/* Arabic uses its own display face; Latin tracking does not apply. */
+[dir="rtl"] .font-display {
+  font-family: var(--font-arabic-display);
+  letter-spacing: 0;
+  line-height: 1.35;
+}
+[dir="rtl"] .tracking-eyebrow,
+[dir="rtl"] .eyebrow { letter-spacing: 0; text-transform: none; font-size: 0.8125rem; }
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+::selection { background: var(--sand-deep); color: var(--ink); }
+
+/* ── Utilities ───────────────────────────────────────────────── */
+@utility shell {
+  width: 100%;
+  max-width: calc(var(--container-shell) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+@utility section-pad {
+  padding-block: 80px;
+  @media (min-width: 1024px) { padding-block: 160px; }
+}
+@utility tabular {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--text-eyebrow);
+  line-height: 1.4;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+@utility link-underline {
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  transition: text-decoration-color 200ms var(--ease-editorial), color 200ms var(--ease-editorial);
+  &:hover { text-decoration-color: var(--accent); color: var(--ink); }
+}
+
+/* Placeholder token — visible by design (regulatory requirement). */
+.ph {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.78em;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--accent-deep);
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+  border-bottom: 1px dashed var(--accent);
+  padding: 0 0.2em;
+  border-radius: 2px;
+  overflow-wrap: anywhere;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* Bilingual dummy values (content/dummy.ts): show the span matching the page direction. */
+[dir="rtl"] .l-en, [dir="ltr"] .l-ar { display: none; }
+
+/* ── Scroll reveal (progressive: content is visible without JS) ── */
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 600ms var(--ease-editorial), transform 600ms var(--ease-editorial);
+  transition-delay: calc(var(--i, 0) * 80ms);
+}
+html.js [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Dialogs */
+html:has(dialog[open]) { overflow: hidden; }
+dialog.dialog[open] { animation: dialog-in 400ms var(--ease-editorial); }
+dialog.dialog[open]::backdrop { animation: fade-in 300ms var(--ease-editorial); }
+@keyframes dialog-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* Marquee pauses on hover / focus */
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  html.js [data-reveal] { opacity: 1; transform: none; }
+  .marquee-track { animation: none !important; flex-wrap: wrap; }
+  .marquee-dup { display: none !important; }
 }
