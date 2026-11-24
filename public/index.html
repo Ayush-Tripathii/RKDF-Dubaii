@@ -3,10 +3,12 @@
 <head>
   <meta charset="utf-8">
   <title>RKDF University Dubai</title>
-  <meta http-equiv="refresh" content="0; url=./en/">
   <script>
+    var path = window.location.pathname;
+    var base = path.replace(/\/+$/, '');
     var lang = (navigator.language || navigator.userLanguage || '').slice(0, 2);
-    window.location.replace(lang === 'ar' ? './ar/' : './en/');
+    var target = (lang === 'ar' ? '/ar/' : '/en/');
+    window.location.replace(base + target);
   </script>
 </head>
 <body>
